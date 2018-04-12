@@ -48,6 +48,7 @@ class MainWindow(QMainWindow, QWidget):
         """初始化主窗口Ui"""
         self.createButton()
         self.createImageLabel()
+        self.createDetectResultLable()
 
     def showUi(self):
         """显示主窗口"""
@@ -67,10 +68,20 @@ class MainWindow(QMainWindow, QWidget):
         """创建图像标签"""
         self.imageToShow = QImage()
         self.imageToShowLabel = QLabel(self)
+        
+    def createDetectResultLable(self): 
+        """创建计算结果标签"""
+        self.calcResultButton = QPushButton("计算污染等级", self)
+        self.resultNumLabel = QLabel("熵",self)
+        self.resultNumLineEdit = QLineEdit(self)
+        self.resultTextLabel = QLabel("污染等级",self)
+        self.resultTextLineEdit = QLineEdit(self)
+    
      
     def openAFrameImage(self):
         """打开单张图片"""
-        if self.imageToShow.load("./img/Test.jpg"):
+        fileName, fileType = QFileDialog.getOpenFileName(self, "Open file", "./img", "Image files(*.bmp, *.jpg)")
+        if self.imageToShow.load(fileName):
             self.imageToShowLabel.setPixmap(QPixmap.fromImage(self.imageToShow))
      
     def setupLayout(self):
@@ -78,16 +89,20 @@ class MainWindow(QMainWindow, QWidget):
         self.createGroupBox_For_AFrameImage()
         self.createGroupBox_For_LocalCamera()
         self.createGroupBox_For_ImageToShow()
+        self.createGroupBox_For_DetectResult()
 
         leftSideLayout = QVBoxLayout()
-        leftSideLayout.addStretch(1)
-        leftSideLayout.addWidget(self.AFrameImageGroupBox)
-        leftSideLayout.addWidget(self.LocalCameraGroupBox)
+        
+        leftSideLayout.addWidget(self.aFrameImageGroupBox)
+        leftSideLayout.addWidget(self.localCameraGroupBox)
+        leftSideLayout.addStretch()# 在最后一个控件之后添加伸缩，这样所有的控件就会居上显示
          
         mainLayout = QHBoxLayout()
-        mainLayout.addStretch(1)
+        
         mainLayout.addLayout(leftSideLayout)
-        mainLayout.addWidget(self.ImageToShowGroupBox)
+        mainLayout.addWidget(self.imageToShowGroupBox)
+        mainLayout.addWidget(self.detectResultGroupBox)
+        mainLayout.addStretch()# 在最后一个控件之后添加伸缩，这样所有的控件就会居左显示
         
         widget = QWidget()
         widget.setLayout(mainLayout)
@@ -95,29 +110,39 @@ class MainWindow(QMainWindow, QWidget):
         
     def createGroupBox_For_AFrameImage(self):
         """单张图片的GroupBox"""
-        self.AFrameImageGroupBox = QGroupBox("AFrameImage")
+        self.aFrameImageGroupBox = QGroupBox("AFrameImage")
         layout = QVBoxLayout()
         layout.setSpacing(10) 
         layout.addWidget(self.openAFrameImageButton)
-        self.AFrameImageGroupBox.setLayout(layout)
+        self.aFrameImageGroupBox.setLayout(layout)
         
     def createGroupBox_For_LocalCamera(self):
         """本地摄像头的GroupBox"""
-        self.LocalCameraGroupBox = QGroupBox("LocalCamera")
+        self.localCameraGroupBox = QGroupBox("LocalCamera")
         layout = QVBoxLayout()
         layout.setSpacing(10) 
         layout.addWidget(self.openLocalCameraButton)
-        self.LocalCameraGroupBox.setLayout(layout)  
+        self.localCameraGroupBox.setLayout(layout)  
 
     def createGroupBox_For_ImageToShow(self):
         """图像的GroupBox"""
-        self.ImageToShowGroupBox = QGroupBox("ImageToShow")
+        self.imageToShowGroupBox = QGroupBox("ImageToShow")
         layout = QVBoxLayout()
         layout.setSpacing(10) 
         layout.addWidget(self.imageToShowLabel)
-        self.ImageToShowGroupBox.setLayout(layout)  
+        self.imageToShowGroupBox.setLayout(layout)  
     
-        
+    def createGroupBox_For_DetectResult(self):
+        """计算结果的GroupBox"""
+        self.detectResultGroupBox = QGroupBox("DetectResult")
+        layout = QGridLayout()
+        layout.setSpacing(10) 
+        layout.addWidget(self.calcResultButton,0,0,1,2)
+        layout.addWidget(self.resultNumLabel,1,0)
+        layout.addWidget(self.resultNumLineEdit,1,1)
+        layout.addWidget(self.resultTextLabel,2,0)
+        layout.addWidget(self.resultTextLineEdit,2,1)
+        self.detectResultGroupBox.setLayout(layout)     
         
 
      
