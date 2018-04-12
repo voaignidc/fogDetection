@@ -7,6 +7,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtSql import *
 
 import cv2
+import numpy as np
+
 """主函数"""
 app = QApplication(sys.argv)
 app.setApplicationName("雾霾检测")
@@ -28,125 +30,47 @@ class LocalCamera():
     def get():
         pass
 
-
-
 class MainWindow(QMainWindow, QWidget):
     """主窗口"""
     def __init__(self):
         super().__init__()  
-        self.setupMainWindow()
-    
-
-    def setupMainWindow(self):
-        """初始化主窗口"""
-        self.setupUi()
-        self.setupLayout()
+        self.imgArray = np.array([]) # 存储图像的矩阵
+        self.calcDetectResultThreadRunning = 0 # 为1,线程正在运行
+        self.ui = mainWindowUi.MainWindowUi()
         self.connectSignalSlot()
-        self.showUi()
-    
-    def setupUi(self):
-        """初始化主窗口Ui"""
-        self.createButton()
-        self.createImageLabel()
-        self.createDetectResultLable()
-
-    def showUi(self):
-        """显示主窗口"""
-        self.show()
-        self.setWindowIcon(QIcon("./icon/foot32.png"))
+        self.ui.showUi()
         
     def connectSignalSlot(self):
         """连接信号与槽"""
-        self.openAFrameImageButton.clicked.connect(self.openAFrameImage) 
+        self.ui.openAFrameImageButton.clicked.connect(self.openAFrameImage) 
+        self.ui.calcResultButton.clicked.connect(self.startCalcDetectResult) 
         
-    def createButton(self):
-        """创建按钮"""
-        self.openLocalCameraButton = QPushButton("打开本地摄像头", self)
-        self.openAFrameImageButton = QPushButton("打开图片", self)
-     
-    def createImageLabel(self):
-        """创建图像标签"""
-        self.imageToShow = QImage()
-        self.imageToShowLabel = QLabel(self)
-        
-    def createDetectResultLable(self): 
-        """创建计算结果标签"""
-        self.calcResultButton = QPushButton("计算污染等级", self)
-        self.resultNumLabel = QLabel("熵",self)
-        self.resultNumLineEdit = QLineEdit(self)
-        self.resultTextLabel = QLabel("污染等级",self)
-        self.resultTextLineEdit = QLineEdit(self)
-    
-     
     def openAFrameImage(self):
         """打开单张图片"""
-        fileName, fileType = QFileDialog.getOpenFileName(self, "Open file", "./img", "Image files(*.bmp, *.jpg)")
-        if self.imageToShow.load(fileName):
-            self.imageToShowLabel.setPixmap(QPixmap.fromImage(self.imageToShow))
-     
-    def setupLayout(self):
-        """初始化布局"""
-        self.createGroupBox_For_AFrameImage()
-        self.createGroupBox_For_LocalCamera()
-        self.createGroupBox_For_ImageToShow()
-        self.createGroupBox_For_DetectResult()
+        fileName, fileType = QFileDialog.getOpenFileName(self, "Open file", "./img", "Image files(*.bmp; *.jpg)")
+        if self.ui.imageToShow.load(fileName):
+            self.ui.imageToShowLabel.setPixmap(QPixmap.fromImage(self.ui.imageToShow))
+            
+        self.imgArray = cv2.imread(fileName) #原图提取
+        
+    def startCalcDetectResult(self): 
+        """开始计算检测结果,建立一个新线程"""
+        if self.imgArray.size > 0 and (not self.calcDetectResultThreadRunning): # 图像矩阵非空
+            self.calcDetectResultThreadRunning = 1
+            self.calcDetectResultThread = filter.CalcDetectResultThread(self.imgArray)         
+            self.calcDetectResultThread.resultNumSignal.connect(self.refreshDetectResult)
+            self.calcDetectResultThread.start()
 
-        leftSideLayout = QVBoxLayout()
         
-        leftSideLayout.addWidget(self.aFrameImageGroupBox)
-        leftSideLayout.addWidget(self.localCameraGroupBox)
-        leftSideLayout.addStretch()# 在最后一个控件之后添加伸缩，这样所有的控件就会居上显示
-         
-        mainLayout = QHBoxLayout()
         
-        mainLayout.addLayout(leftSideLayout)
-        mainLayout.addWidget(self.imageToShowGroupBox)
-        mainLayout.addWidget(self.detectResultGroupBox)
-        mainLayout.addStretch()# 在最后一个控件之后添加伸缩，这样所有的控件就会居左显示
+    def refreshDetectResult(self, result):
+        """更新检测结果"""
+        print(result)
+        self.calcDetectResultThreadRunning = 0
+        self.ui.resultNumLineEdit.setText('{:.4f}'.format(result))
         
-        widget = QWidget()
-        widget.setLayout(mainLayout)
-        self.setCentralWidget(widget)    
-        
-    def createGroupBox_For_AFrameImage(self):
-        """单张图片的GroupBox"""
-        self.aFrameImageGroupBox = QGroupBox("AFrameImage")
-        layout = QVBoxLayout()
-        layout.setSpacing(10) 
-        layout.addWidget(self.openAFrameImageButton)
-        self.aFrameImageGroupBox.setLayout(layout)
-        
-    def createGroupBox_For_LocalCamera(self):
-        """本地摄像头的GroupBox"""
-        self.localCameraGroupBox = QGroupBox("LocalCamera")
-        layout = QVBoxLayout()
-        layout.setSpacing(10) 
-        layout.addWidget(self.openLocalCameraButton)
-        self.localCameraGroupBox.setLayout(layout)  
-
-    def createGroupBox_For_ImageToShow(self):
-        """图像的GroupBox"""
-        self.imageToShowGroupBox = QGroupBox("ImageToShow")
-        layout = QVBoxLayout()
-        layout.setSpacing(10) 
-        layout.addWidget(self.imageToShowLabel)
-        self.imageToShowGroupBox.setLayout(layout)  
-    
-    def createGroupBox_For_DetectResult(self):
-        """计算结果的GroupBox"""
-        self.detectResultGroupBox = QGroupBox("DetectResult")
-        layout = QGridLayout()
-        layout.setSpacing(10) 
-        layout.addWidget(self.calcResultButton,0,0,1,2)
-        layout.addWidget(self.resultNumLabel,1,0)
-        layout.addWidget(self.resultNumLineEdit,1,1)
-        layout.addWidget(self.resultTextLabel,2,0)
-        layout.addWidget(self.resultTextLineEdit,2,1)
-        self.detectResultGroupBox.setLayout(layout)     
-        
-
-     
-
+            
+  
 """主函数"""
 window = MainWindow()
 sys.exit(app.exec_())
