@@ -57,17 +57,19 @@ class MainWindow(QMainWindow, QWidget):
         """开始计算检测结果,建立一个新线程"""
         if self.imgArray.size > 0 and (not self.calcDetectResultThreadRunning): # 图像矩阵非空
             self.calcDetectResultThreadRunning = 1
-            self.calcDetectResultThread = filter.CalcDetectResultThread(self.imgArray)         
-            self.calcDetectResultThread.resultNumSignal.connect(self.refreshDetectResult)
+            self.calcDetectResultThread = detector.CalcDetectResultThread(self.imgArray)         
+            self.calcDetectResultThread.resultSignal.connect(self.refreshDetectResult)
             self.calcDetectResultThread.start()
 
         
         
-    def refreshDetectResult(self, result):
+    def refreshDetectResult(self, resultNums, resultClassify):
         """更新检测结果"""
-        print(result)
+
         self.calcDetectResultThreadRunning = 0
-        self.ui.resultNumLineEdit.setText('{:.4f}'.format(result))
+        # self.ui.resultNumLineEdit.setText('{:.4f}'.format(resultNums))
+        self.ui.resultNumLineEdit.setText(resultNums)
+        self.ui.resultTextLineEdit.setText(str(resultClassify))
         
             
   

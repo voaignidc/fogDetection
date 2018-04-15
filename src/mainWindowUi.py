@@ -103,5 +103,10 @@ class MainWindowUi(QMainWindow, QWidget):
         layout.addWidget(self.resultNumLineEdit,1,1)
         layout.addWidget(self.resultTextLabel,2,0)
         layout.addWidget(self.resultTextLineEdit,2,1)
-        self.detectResultGroupBox.setLayout(layout)     
+        self.detectResultGroupBox.setLayout(layout)    
+
+
+
+
+        
         

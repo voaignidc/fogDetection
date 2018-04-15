@@ -1,3 +1,3 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-__all__ = ['mainWindowUi','filter']
+__all__ = ['mainWindowUi','detector']

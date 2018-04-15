@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+"""
+Created on Sat Apr 14 19:16:32 2018
+
+@author: 筱懒兄
+"""
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -7,21 +12,33 @@ from PyQt5.QtWidgets import *
 import cv2
 import numpy as np
 import math
+from sklearn.externals import joblib
+
 
 class CalcDetectResultThread(QThread):
     """计算检测结果的新线程"""
-    resultNumSignal = pyqtSignal(float)
+    resultSignal = pyqtSignal([str,int])
     def __init__(self, imgArray):
         super().__init__()
         self.imgArray = imgArray
+        self.model = './model/fog_model.pkl'
+        self.clf = joblib.load(self.model)
 
     def run(self):
-        res = self.getRes()
-        self.resultNumSignal.emit(res)
+        f=[]
+        resultNums = ''
+        for i in range(4):
+            f.append(self.imgCalculate(i*50+50))
+            resultNums = resultNums + '{:.4f}'.format(f[i]) + ', '
 
-    def getRes(self):  
+        resultClassify = int(self.clf.predict([f]))
+        print(f, '\n', resultClassify)
+        
+        self.resultSignal.emit(resultNums, resultClassify)
+
+    def imgCalculate(self, value):  
         img = self.imgArray    
-        b, g, r = cv2.split(img)# 通道分离
+        b, g, r = cv2.split(img) # 通道分离
         img_GBF = cv2.GaussianBlur(b, (5,5), 0) # 图像滤波
 
         #差分统计、熵计算
@@ -40,7 +57,7 @@ class CalcDetectResultThread(QThread):
                     
                     G1 = abs(g5 - g8)
                     G2 = abs(g6 - g7)
-                    if G1<200 and G2<200:
+                    if G1 < value and G2 < value:
                         img_GBF[i,j] = 0  
 
         tmp = []
@@ -63,5 +80,7 @@ class CalcDetectResultThread(QThread):
             else:  
                 res = float(res + tmp[i] * math.log(tmp[i]))     #/ math.log(2.0))) 
         
-        return res
+        return -res
+        
+     
 
