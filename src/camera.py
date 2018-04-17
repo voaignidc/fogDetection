@@ -13,6 +13,7 @@ class LocalCamera(QObject):
     def __init__(self):
         super().__init__() 
         self.image = QImage()
+        self.imgArray = np.array([]) 
         self.imageQueue = queue.Queue(maxsize = 10) 
         self.device = cv2.VideoCapture(0)
         self.getLocalCameraParam()
@@ -24,15 +25,18 @@ class LocalCamera(QObject):
         self.localCameraTimer.timeOutSignal.connect(self.getLocalCameraImg)
         
     def getLocalCameraParam(self):
+        """获取摄像头参数"""
         if self.device.isOpened():
             ret, frame= self.device.read()      
             self.height, self.width, self.bytesPerComponent = frame.shape
             self.bytesPerLine = self.bytesPerComponent * self.width
-            return self.height, self.width
+            return self.width, self.height
         
     def getLocalCameraImg(self):
+        """获取摄像头图像"""
         if self.device.isOpened():
-            ret, frame = self.device.read()  
+            ret, frame = self.device.read()
+            self.imgArray = frame         
             # 变换彩色空间顺序
             cv2.cvtColor(frame, cv2.COLOR_BGR2RGB, frame)
             # 转为QImage对象

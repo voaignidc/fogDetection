@@ -38,6 +38,7 @@ class MainWindow(QMainWindow, QWidget):
         self.ui.calcResultButton.clicked.connect(self.startCalcDetectResult) 
         self.ui.openLocalCameraButton.clicked.connect(self.openLocalCamera) 
         self.ui.closeLocalCameraButton.clicked.connect(self.closeLocalCamera) 
+        self.ui.pingIPButton.clicked.connect(self.pingIP) 
         
     def openAFrameImage(self):
         """打开单张图片"""
@@ -61,34 +62,42 @@ class MainWindow(QMainWindow, QWidget):
         """关闭本地摄像头"""
         if not self.localCamera.localCameraTimer.isStoped():
             self.localCamera.localCameraTimer.stop()
+            # 原图提取
+            self.imgArray = self.localCamera.imgArray
         # 销毁本地摄像头对象
         del self.localCamera
-        
-        
+              
     def refreshLocalCameraImg(self):
-        
+        """本地摄像头, 更新窗口上的图像"""
         while not self.localCamera.imageQueue.empty():
             image = self.localCamera.imageQueue.get()
             self.ui.imageToShowLabel.setPixmap(QPixmap.fromImage(image))
-        
-        
+                
+    def pingIP(self):
+        self.webCameraIP = self.ui.webCameraIPLineEdit.text()
+        print(self.webCameraIP)
+        os.system("ping " + self.webCameraIP)
+                
+                
+                
     def startCalcDetectResult(self): 
         """开始计算检测结果,建立一个新线程"""
         if self.imgArray.size > 0 and (not self.calcDetectResultThreadRunning): # 图像矩阵非空
             self.calcDetectResultThreadRunning = 1
             self.calcDetectResultThread = detector.CalcDetectResultThread(self.imgArray)         
             self.calcDetectResultThread.resultSignal.connect(self.refreshDetectResult)
-            self.calcDetectResultThread.start()
-
-        
-        
+            self.calcDetectResultThread.start()        
+            
     def refreshDetectResult(self, resultNums, resultClassify):
         """更新检测结果"""
-
         self.calcDetectResultThreadRunning = 0
         # self.ui.resultNumLineEdit.setText('{:.4f}'.format(resultNums))
         self.ui.resultNumLineEdit.setText(resultNums)
         self.ui.resultTextLineEdit.setText(str(resultClassify))
+        
+        if self.ui.resultImage.load("./icon/level" + str(resultClassify) + ".jpg"):
+            self.ui.resultImageLabel.setPixmap(QPixmap.fromImage(self.ui.resultImage))
+        
         
             
   
