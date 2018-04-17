@@ -20,7 +20,7 @@ class MainWindowUi(QMainWindow, QWidget):
         """初始化主窗口Ui"""
         self.createButton()
         self.createImageLabel()
-        self.createDetectResultLable()
+        self.createDetectResultLabel()
 
     def showUi(self):
         """显示主窗口"""
@@ -30,6 +30,8 @@ class MainWindowUi(QMainWindow, QWidget):
     def createButton(self):
         """创建按钮"""
         self.openLocalCameraButton = QPushButton("打开本地摄像头", self)
+        self.closeLocalCameraButton = QPushButton("关闭本地摄像头", self)
+        self.openVideoButton = QPushButton("打开视频", self)
         self.openAFrameImageButton = QPushButton("打开图片", self)
      
     def createImageLabel(self):
@@ -37,7 +39,7 @@ class MainWindowUi(QMainWindow, QWidget):
         self.imageToShow = QImage()
         self.imageToShowLabel = QLabel(self)
         
-    def createDetectResultLable(self): 
+    def createDetectResultLabel(self): 
         """创建计算结果标签"""
         self.calcResultButton = QPushButton("计算污染等级", self)
         self.resultNumLabel = QLabel("熵",self)
@@ -48,6 +50,7 @@ class MainWindowUi(QMainWindow, QWidget):
     def setupLayout(self):
         """初始化布局"""
         self.createGroupBox_For_AFrameImage()
+        self.createGroupBox_For_Video()
         self.createGroupBox_For_LocalCamera()
         self.createGroupBox_For_ImageToShow()
         self.createGroupBox_For_DetectResult()
@@ -55,6 +58,7 @@ class MainWindowUi(QMainWindow, QWidget):
         leftSideLayout = QVBoxLayout()
         
         leftSideLayout.addWidget(self.aFrameImageGroupBox)
+        leftSideLayout.addWidget(self.videoGroupBox)
         leftSideLayout.addWidget(self.localCameraGroupBox)
         leftSideLayout.addStretch()# 在最后一个控件之后添加伸缩，这样所有的控件就会居上显示
          
@@ -77,12 +81,22 @@ class MainWindowUi(QMainWindow, QWidget):
         layout.addWidget(self.openAFrameImageButton)
         self.aFrameImageGroupBox.setLayout(layout)
         
+    def createGroupBox_For_Video(self):
+        """视频的GroupBox"""
+        self.videoGroupBox = QGroupBox("Video")
+        layout = QVBoxLayout()
+        layout.setSpacing(10) 
+        layout.addWidget(self.openVideoButton)
+        self.videoGroupBox.setLayout(layout)      
+        
+        
     def createGroupBox_For_LocalCamera(self):
         """本地摄像头的GroupBox"""
         self.localCameraGroupBox = QGroupBox("LocalCamera")
         layout = QVBoxLayout()
         layout.setSpacing(10) 
         layout.addWidget(self.openLocalCameraButton)
+        layout.addWidget(self.closeLocalCameraButton)
         self.localCameraGroupBox.setLayout(layout)  
 
     def createGroupBox_For_ImageToShow(self):

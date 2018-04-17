@@ -1,10 +1,5 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Apr 14 19:16:32 2018
-
-@author: 筱懒兄
-"""
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
