@@ -30,6 +30,7 @@ class LocalCamera(QObject):
             ret, frame= self.device.read()      
             self.height, self.width, self.bytesPerComponent = frame.shape
             self.bytesPerLine = self.bytesPerComponent * self.width
+            # print(self.width, self.height, self.bytesPerLine)
             return self.width, self.height
         
     def getLocalCameraImg(self):
@@ -41,6 +42,8 @@ class LocalCamera(QObject):
             cv2.cvtColor(frame, cv2.COLOR_BGR2RGB, frame)
             # 转为QImage对象
             self.image = QImage(frame.data, self.width, self.height, self.bytesPerLine, QImage.Format_RGB888) 
+            if self.imageQueue.full():
+                self.imageQueue.get()
             self.imageQueue.put(self.image)
             self.refreshLocalCameraImgSignal.emit()
 
