@@ -62,6 +62,8 @@ class MainWindowUi(QMainWindow, QWidget):
     def createDetectResultLabel(self): 
         """创建计算结果标签"""
         self.calcResultButton = QPushButton("计算污染等级", self)
+        self.autoCalcButton = QRadioButton('视频自动计算',  self)  
+        self.autoCalcButton.setFocusPolicy(Qt.NoFocus)
         self.resultNumLabel = QLabel("熵",self)
         self.resultNumLineEdit = QLineEdit(self)
         self.resultTextLabel = QLabel("污染等级",self)
@@ -162,13 +164,14 @@ class MainWindowUi(QMainWindow, QWidget):
     def createGroupBox_For_DetectResult(self):
         """计算结果的GroupBox"""
         self.detectResultGroupBox = QGroupBox("detectResult")
-        layout = QGridLayout()
+        layout = QVBoxLayout()
         layout.setSpacing(10) 
-        layout.addWidget(self.calcResultButton,0,0,1,2)
-        layout.addWidget(self.resultNumLabel,1,0)
-        layout.addWidget(self.resultNumLineEdit,1,1)
-        layout.addWidget(self.resultTextLabel,2,0)
-        layout.addWidget(self.resultTextLineEdit,2,1)
+        layout.addWidget(self.calcResultButton)
+        layout.addWidget(self.autoCalcButton)
+        layout.addWidget(self.resultNumLabel)
+        layout.addWidget(self.resultNumLineEdit)
+        layout.addWidget(self.resultTextLabel)
+        layout.addWidget(self.resultTextLineEdit)
         self.detectResultGroupBox.setLayout(layout)    
 
 

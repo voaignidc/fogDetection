@@ -10,11 +10,14 @@ import numpy as np
 class WebCameraSeverThread(QThread):
     """接收网络摄像头图片的线程"""
     refreshWebCameraImgSignal = pyqtSignal()
+    refreshWebCameraImgArraySignal = pyqtSignal()
     def __init__(self, address = ('169.254.78.16', 22)):
         super().__init__()
         self.image = QImage()
-        self.imgArray = np.array([]) 
-        self.imageQueue = queue.Queue(maxsize = 10) 
+        self.imageArray = np.array([]) 
+        self.imageQueue = queue.Queue(maxsize = 5) 
+        self.imageArrayQueue = queue.Queue(maxsize = 5)
+        self.refreshImageArrayCounter = 280      
         
         self.stopedFlag = False
         self.mutex = QMutex()
@@ -39,7 +42,14 @@ class WebCameraSeverThread(QThread):
                 byteData = self.recvAll(conn, int(length))
                 data = np.fromstring(byteData, np.uint8)
                 decimg = cv2.imdecode(data, 1) # 解码处理，返回mat图片
-                self.imgArray = decimg
+                self.imageArray = decimg
+                if self.imageArrayQueue.full():
+                    self.imageArrayQueue.get()
+                self.refreshImageArrayCounter = self.refreshImageArrayCounter + 1
+                if self.refreshImageArrayCounter >= 300:
+                    self.refreshImageArrayCounter = 0
+                    self.refreshWebCameraImgArraySignal.emit()              
+                self.imageArrayQueue.put(self.imageArray)   
                 cv2.cvtColor(decimg, cv2.COLOR_BGR2RGB, decimg)
                 self.image = QImage(decimg.data, 640, 480, 1920, QImage.Format_RGB888) 
                 if self.imageQueue.full():
