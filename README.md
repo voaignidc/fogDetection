@@ -17,4 +17,4 @@
 * run.py
 
 ## 截图
-![Screenshot](https://github.com/voaignidc/UpperMonitorForFootPressureAcquisition/blob/master/screenshot.JPG)
+![Screenshot](https://github.com/voaignidc/fogDetection/blob/master/screenshot.JPG)
