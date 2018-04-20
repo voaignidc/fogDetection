@@ -35,6 +35,8 @@ class MainWindow(QMainWindow, QWidget):
     def connectSignalSlot(self):
         """连接信号与槽"""
         self.ui.openAFrameImageButton.clicked.connect(self.openAFrameImage) 
+        self.ui.openVideoButton.clicked.connect(self.openVideo) 
+        self.ui.closeVideoButton.clicked.connect(self.closeVideo) 
         self.ui.calcResultButton.clicked.connect(self.startCalcDetectResult) 
         self.ui.openLocalCameraButton.clicked.connect(self.openLocalCamera) 
         self.ui.openWebCameraButton.clicked.connect(self.openWebCamera) 
@@ -52,8 +54,36 @@ class MainWindow(QMainWindow, QWidget):
         
         
     def openVideo(self):
-        pass
+        fileName, fileType = QFileDialog.getOpenFileName(self, "Open file", "./img", "Image files(*.mp4;*.avi)")
+        self.video = video.Video(fileName)
+        self.video.refreshVideoImgSignal.connect(self.refreshVideoImage)
+        self.video.refreshVideoImgArraySignal.connect(self.refreshVideoImageArray)
+        self.video.videoTimer.start()
+    
+    def closeVideo(self):
+        """关闭视频"""
+        if not self.video.videoTimer.isStoped():
+            self.video.videoTimer.stop()
+            # 原图提取
+            while not self.video.imageArrayQueue.empty():
+                self.imageArray = self.video.imageArrayQueue.get()
+        # 销毁本地摄像头对象
+        del self.video    
+    
+    def refreshVideoImage(self):
+        """"""
+        while not self.video.imageQueue.empty():
+            image = self.video.imageQueue.get()
+            self.ui.imageToShowLabel.setPixmap(QPixmap.fromImage(image))    
         
+    def refreshVideoImageArray(self):
+        """视频, 更新ImageArray,计算检测结果"""    
+        if self.ui.autoCalcButton.isChecked(): 
+            while not self.video.imageArrayQueue.empty():
+                self.imageArray = self.video.imageArrayQueue.get()    
+            self.startCalcDetectResult()   
+
+    
     def openLocalCamera(self):
         """打开本地摄像头"""
         self.localCamera = localCamera.LocalCamera()

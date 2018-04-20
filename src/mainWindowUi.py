@@ -33,6 +33,7 @@ class MainWindowUi(QMainWindow, QWidget):
         self.closeLocalCameraButton = QPushButton("关闭本地摄像头", self)
         
         self.openVideoButton = QPushButton("打开视频", self)
+        self.closeVideoButton = QPushButton("关闭视频", self)
         self.openAFrameImageButton = QPushButton("打开图片", self)
         
         self.webCameraIPLabel = QLabel("IP地址",self)
@@ -63,7 +64,7 @@ class MainWindowUi(QMainWindow, QWidget):
         """创建计算结果标签"""
         self.calcResultButton = QPushButton("计算污染等级", self)
         self.autoCalcButton = QRadioButton('视频自动计算',  self)  
-        self.autoCalcButton.setFocusPolicy(Qt.NoFocus)
+        # self.autoCalcButton.setFocusPolicy(Qt.NoFocus)
         self.resultNumLabel = QLabel("熵",self)
         self.resultNumLineEdit = QLineEdit(self)
         self.resultTextLabel = QLabel("污染等级",self)
@@ -116,6 +117,7 @@ class MainWindowUi(QMainWindow, QWidget):
         layout = QVBoxLayout()
         layout.setSpacing(10) 
         layout.addWidget(self.openVideoButton)
+        layout.addWidget(self.closeVideoButton)
         self.videoGroupBox.setLayout(layout)      
         
         

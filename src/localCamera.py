@@ -19,7 +19,6 @@ class LocalCamera(QObject):
         self.imageArrayQueue = queue.Queue(maxsize = 5) 
         self.refreshImageArrayCounter = 280
         
-        
         self.device = cv2.VideoCapture(0)
         self.getLocalCameraParam()
         
