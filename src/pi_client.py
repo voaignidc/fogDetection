@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+"""
+树莓派下位机程序
+"""
 import socket
 import numpy
 from picamera.array import PiRGBArray
