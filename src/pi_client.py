@@ -21,7 +21,7 @@ time.sleep(0.1)
 # socket.SOCK_STREAM代表基于TCP的流式socket通信
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 # 连接服务端
-address_server = ('169.254.78.16', 22)
+address_server = ('169.254.196.152', 22)
 sock.connect(address_server)
 
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):

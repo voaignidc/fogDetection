@@ -31,7 +31,7 @@ def recv_all(sock, count):
 # socket.SOCK_STREAM代表基于TCP的流式socket通信
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # 设置地址与端口，如果是接收任意ip对本服务器的连接，地址栏可空，但端口必须设置
-address = ('169.254.78.16', 22)
+address = ('169.254.196.152', 22)
 s.bind(address) # 将Socket（套接字）绑定到地址
 s.listen(True) # 开始监听TCP传入连接
 print ('Waiting for images...')

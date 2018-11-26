@@ -125,6 +125,7 @@ class MainWindow(QMainWindow, QWidget):
     def openWebCamera(self):
         """打开网络摄像头"""   
         if self.pingIP():
+            print("连接此IP:", self.ui.webCameraIPLineEdit.text())
             self.webCameraSeverThread = webCamera.WebCameraSeverThread((self.ui.webCameraIPLineEdit.text(), int(self.ui.webCameraPortLineEdit.text()))) 
             self.webCameraSeverThread.refreshWebCameraImgSignal.connect(self.refreshWebCameraImage)
             self.webCameraSeverThread.refreshWebCameraImgArraySignal.connect(self.refreshWebCameraImageArray)

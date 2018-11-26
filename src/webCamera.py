@@ -11,7 +11,7 @@ class WebCameraSeverThread(QThread):
     """接收网络摄像头图片的线程"""
     refreshWebCameraImgSignal = pyqtSignal()
     refreshWebCameraImgArraySignal = pyqtSignal()
-    def __init__(self, address = ('169.254.78.16', 22)):
+    def __init__(self, address = ('169.254.196.152', 22)):
         super().__init__()
         self.image = QImage()
         self.imageArray = np.array([]) 

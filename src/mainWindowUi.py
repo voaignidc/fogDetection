@@ -38,7 +38,7 @@ class MainWindowUi(QMainWindow, QWidget):
         
         self.webCameraIPLabel = QLabel("IP地址",self)
         self.webCameraIPLineEdit = QLineEdit(self)
-        self.webCameraIPLineEdit.setText("169.254.78.16")
+        self.webCameraIPLineEdit.setText("169.254.196.152")
         self.webCameraPortLabel = QLabel("端口",self)
         self.webCameraPortLineEdit = QLineEdit(self)
         self.webCameraPortLineEdit.setText("22")
