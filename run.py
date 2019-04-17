@@ -8,9 +8,9 @@ from PyQt5.QtGui import *
 import cv2
 import numpy as np
 
-"""main"""
+"""主函数"""
 app = QApplication(sys.argv)
-app.setApplicationName("树莓派视频传输")
+app.setApplicationName("雾霾检测")
 app.setQuitOnLastWindowClosed(True)
 
 from src import *
@@ -19,7 +19,7 @@ if getattr(sys, 'frozen', False):
     rootPath = os.path.dirname(sys.executable)
 elif __file__:
     rootPath = os.path.dirname(__file__)  
-print("rootPath:", rootPath)
+print("根目录:", rootPath)
 
 
 class MainWindow(QMainWindow, QWidget):
@@ -155,7 +155,6 @@ class MainWindow(QMainWindow, QWidget):
                 self.imageArray = self.webCameraSeverThread.imageArrayQueue.get()    
             self.startCalcDetectResult()    
          
-    '''    
     def startCalcDetectResult(self): 
         """开始计算检测结果,建立一个新线程"""
         print("开始计算检测结果")
@@ -175,7 +174,7 @@ class MainWindow(QMainWindow, QWidget):
         if self.ui.resultImage.load("./icon/level" + str(resultClassify) + ".jpg"):
             self.ui.resultImageLabel.setPixmap(QPixmap.fromImage(self.ui.resultImage))
         
-    '''   
+        
             
   
 """主函数"""
